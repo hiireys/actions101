@@ -1,0 +1,25 @@
+name: CI/CD Pipeline
+on: 
+  push:
+    branches: 
+       - main
+       - feature/*
+       - release/*
+    tags: 
+       - release-*
+
+  workflow_dispatch: 
+
+jobs:
+  buildJob:
+    runs-on: [ self-hosted ]
+    steps: 
+        - name: Checkout code
+          uses: actions/checkout@v4
+
+        - name: Run ls command to list files
+          run: |
+            ls
+            pwd
+            whoami
+            uname -a
