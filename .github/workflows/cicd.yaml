@@ -7,6 +7,8 @@ on:
        - release/*
     tags: 
        - release-*
+       
+  workflow_dispatch:
 
 
 jobs:
