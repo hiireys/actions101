@@ -12,8 +12,16 @@ on:
 jobs:
   buildJob:
     runs-on: [ self-hosted ]
-    environment: Development
+    environment: Production
     steps: 
         - name: Run command
           run: |
             echo "Hello from the other side"
+  devBuildJob:
+    runs-on: [ self-hosted ]
+    environment: Development
+    steps: 
+       - name: Run command 
+         run: | 
+           echo "Hello from dev job"
+  
