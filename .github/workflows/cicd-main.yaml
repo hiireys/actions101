@@ -10,13 +10,6 @@ on:
   workflow_dispatch:
 
 jobs:
-  buildJob:
-    runs-on: [ self-hosted ]
-    environment: Production
-    steps: 
-        - name: Run command
-          run: |
-            echo "Hello from the other side"
   devBuildJob:
     runs-on: [ self-hosted ]
     environment: Development
