@@ -1,4 +1,4 @@
-name: CI/CD Pipeline2
+name: CI/CD Pipeline - FEATURE
 on: 
   push:
     branches: 
@@ -13,12 +13,6 @@ jobs:
   buildJob:
     runs-on: [ self-hosted ]
     steps: 
-        - name: Checkout code
-          uses: actions/checkout@v4
-
-        - name: Run ls command to list files
+        - name: Run command
           run: |
-            ls
-            pwd
-            whoami
-            uname -a
+            echo "Hello from the other side"
