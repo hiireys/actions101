@@ -11,15 +11,29 @@ on:
 
 jobs:
   buildJob:
+    if: github.ref == 'refs/heads/main'
     runs-on: [ self-hosted ]
-    environment: production
+    environment: Production
     steps: 
-        - name: Checkout code
-          uses: actions/checkout@v4
-
-        - name: Run ls command to list files
+        - name: Run command
           run: |
-            ls
-            pwd
-            whoami
-            uname -a
+            echo "Hello from the other side"
+
+  Release-tag-job:
+    if: startsWith(github.ref, 'refs/tags/release-')
+    runs-on: [ self-hosted ]
+    environment: Production
+    steps: 
+        - name: Run command
+          run: |
+            echo "Hello from the other side"
+
+  devBuildJob:
+    if: startsWith(github.ref, 'refs/heads/feature/')
+    runs-on: [ self-hosted ]
+    environment: Development
+    steps: 
+       - name: Run command 
+         run: | 
+           echo "Hello from dev job"
+  
