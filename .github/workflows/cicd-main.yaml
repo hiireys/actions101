@@ -19,7 +19,7 @@ jobs:
           run: |
             echo "Hello from the other side"
 
-    release-tag-job:
+  Release-tag-job:
     if: startsWith(github.ref, 'refs/tags/release-*')
     runs-on: [ self-hosted ]
     environment: Production
