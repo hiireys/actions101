@@ -12,6 +12,7 @@ on:
 jobs:
   buildJob:
     runs-on: [ self-hosted ]
+    environment: Development
     steps: 
         - name: Run command
           run: |
