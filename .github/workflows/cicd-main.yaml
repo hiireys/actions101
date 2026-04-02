@@ -20,7 +20,7 @@ jobs:
             echo "Hello from the other side"
 
   Release-tag-job:
-    if: startsWith(github.ref, 'refs/tags/release-*')
+    if: startsWith(github.ref, 'refs/tags/release-')
     runs-on: [ self-hosted ]
     environment: Production
     steps: 
@@ -29,7 +29,7 @@ jobs:
             echo "Hello from the other side"
 
   devBuildJob:
-    if: startsWith(github.ref, 'refs/heads/feature/*')
+    if: startsWith(github.ref, 'refs/heads/feature/')
     runs-on: [ self-hosted ]
     environment: Development
     steps: 
