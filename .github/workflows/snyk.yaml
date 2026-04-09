@@ -40,7 +40,7 @@ jobs:
       - name: List files
         run: |
           pwd
-          ls 
+          ls -al
       - name: Setup Snyk CLI
         run: | 
           curl https://static.snyk.io/cli/latest/snyk-linux -o snyk
