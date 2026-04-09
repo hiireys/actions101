@@ -13,15 +13,16 @@ permissions:
   contents: read
 
 jobs:
-  summary:
+  trivy-job:
     runs-on: ubuntu-latest
     env:
       ACTIONS_STEP_DEBUG: true
     steps:
       - name: Generate Summary
         run: | 
-          echo "## Build Summary" >> $GITHUB_STEP_SUMMARY
-          echo "- Status: Success " >> $GITHUB_STEP_SUMMARY
+          echo "## This Actions is for Trivy Scan" >> $GITHUB_STEP_SUMMARY
+          echo "- Includes Docker image scanning from docker hub " >> $GITHUB_STEP_SUMMARY
+          echo "- The trivy scan report table is avilabe to download " >> $GITHUB_STEP_SUMMARY
     
   build:
     permissions:
