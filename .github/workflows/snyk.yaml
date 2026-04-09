@@ -62,7 +62,7 @@ jobs:
       - name: Snyk container image scan
         id: snyk-container
         run: 
-          snyk container test hiireys/actions101:v1 --org=${{vars.SNYK_ORG_ID}} --severity-threshold=low
+          snyk container test hiireys/actions101:v1 --org=${{vars.SNYK_ORG_ID}} --severity-threshold=high
 
       - name: Upload snyk report to runner to Download
         if: Always() #always runs, even though previous snyk scan job failed
