@@ -28,11 +28,11 @@ jobs:
           uses: aquasecurity/trivy-action@0.35.0
           with: 
             image-ref: hiireys/actions101:v2
-            format: 'sarif'
+            format: sarif
             output: trivy-results.sarif
             #exit-code: 1 to fail it but to got to upload step, we need to pass it
-            ignore-unfixed: false
-            severity: 'CRITICAL,HIGH'
+            # ignore-unfixed: false
+            severity: 'LOW'
         
         - name: Upload SARIF
           uses: github/codeql-action/upload-sarif@v3
