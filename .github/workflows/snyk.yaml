@@ -50,8 +50,8 @@ jobs:
         run: |
           snyk auth ${{secrets.SNYK_TOKEN}}
       
-      - name: Snyk Scan Run
-        id: snyk
+      - name: Snyk Code Scan Run
+        id: snyk-code
         run:
           # snyk code test --org=${{vars.SNYK_ORG_ID}} --severity-threshold=high > snyk-report.txt
           #Snyk always fails (exit code 1) if findings ≥ threshold
@@ -59,6 +59,10 @@ jobs:
           # --sarif > synk-report.sarif
           # > snyk-report.txt
           snyk code test --org=${{vars.SNYK_ORG_ID}} --severity-threshold=high --sarif > snyk-report.sarif
+      - name: Snyk container image scan
+        id: snyk-container
+        run: 
+          snyk container test hiireys/actions101:v1 --org=${{vars.SNYK_ORG_ID}} --severity-threshold=low
 
       - name: Upload snyk report to runner to Download
         if: Always() #always runs, even though previous snyk scan job failed
