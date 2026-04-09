@@ -61,4 +61,4 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
            name: snyk-report
-           path: snyk-report.txt
+           path: snyk-report.sarif
