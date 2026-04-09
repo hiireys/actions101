@@ -25,7 +25,7 @@ jobs:
           echo "- The trivy scan report table is avilabe to download " >> $GITHUB_STEP_SUMMARY
           echo "- Trivy Scan for CRITICAL & HIGH vulnerabilites" >> $GITHUB_STEP_SUMMARY
     
-  build:
+  scan:
     permissions:
       contents: read # for actions/checkout to fetch code
       security-events: write # for github/codeql-action/upload-sarif to upload SARIF results
@@ -71,7 +71,7 @@ jobs:
           severity: 'CRITICAL,HIGH'
 
       - name: Upload to runner to download from Actions tab
-        #if: Always() #it will always run although previous steps failed
+        if: Always() #it will always run although previous steps failed
         uses: actions/upload-artifact@v4
         with: 
           name: trivy-report.txt
