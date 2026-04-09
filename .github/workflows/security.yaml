@@ -27,7 +27,7 @@ jobs:
             format: 'table'
             exit-code: 0
             ignore-unfixed: true
-            severity: 'CRITICAL'
+            severity: 'CRITICAL,HIGH'
           
 
           # 1. build and push docker image (need a builder, can we try
