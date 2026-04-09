@@ -63,7 +63,26 @@ jobs:
       - name: Snyk container image scan
         id: snyk-container
         run: 
-          snyk container test hiireys/actions101:v1 --file=Dockerfile --org=${{vars.SNYK_ORG_ID}} --severity-threshold=high --exclude-base-image-vulns
+          snyk container test hiireys/actions101:v1  --org=${{vars.SNYK_ORG_ID}} --severity-threshold=high
+       
+
+#  Enables base image remediation advice
+
+# Without --file:
+
+# Snyk wasn’t able to auto detect the base image
+
+# With --file:
+# 👉 You’ll get suggestions like:
+
+# Upgrade base image to python:3.11-slim-bullseye
+# 3. Makes --exclude-base-image-vulns work
+
+# 👉 Now Snyk can separate:
+
+# Type	Example
+# Base image vuln	OS packages (zlib, openssl)
+# App vuln	your installed dependencies
 
       # - name: Upload snyk report to runner to Download
       #   if: Always() #always runs, even though previous snyk scan job failed
