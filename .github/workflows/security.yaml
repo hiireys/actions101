@@ -11,8 +11,24 @@ jobs:
     # if: startsWith(github.ref, 'refs/heads/feature/')
     runs-on: [ ubuntu-latest ]
     steps: 
-        - name: Run command
-          run: |
-            echo "Hello from the other side"
+        - name: Checkout code
+          uses: actions/checkout@v3
+          with:
+             sparse-checkout: 
+                app.py
+                Dockerfile
+                requirements.txt
+             sparse-checkout-cone-mode: true
 
-  
+        - name: docker setup
+          command:
+             docker images
+          
+
+          # 1. build and push docker image (need a builder, can we try
+          # /var/run/docker.sock from the host as we gonna use a wsl runner so 
+          # my machine will be the host which has docker desktop
+
+          # 2. setup kustomize and deploy it to kind cluster
+
+          
