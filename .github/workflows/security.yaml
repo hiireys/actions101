@@ -22,7 +22,17 @@ jobs:
 
         - name: docker setup
           run:
-             docker images
+             docker build -t hiireys/actions101:v1 .
+             docker push hiireys/actions101:v1
+        
+        - name: Run trivy scan
+          uses: aquasecurity/trivy-action@0.22.0
+          with: 
+            image-ref: hiireys/actions101:v1
+            format: 'table'
+            exit-code: 0
+            ignore-unifxed: true
+            severity: 'CRITICAL,HIGH'
           
 
           # 1. build and push docker image (need a builder, can we try
