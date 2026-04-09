@@ -26,7 +26,7 @@ jobs:
             image-ref: hiireys/actions101:v2
             format: 'sarif'
             output: trivy-results.sarif
-            exit-code: 1
+            #exit-code: 1 to fail it but to got to upload step, we need to pass it
             ignore-unfixed: false
             severity: 'CRITICAL,HIGH'
         
