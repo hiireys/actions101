@@ -4,8 +4,8 @@ on:
     branches: 
       - feature/snyk
   pull_request: 
-    branches:
-       - main
+    # branches:
+    #    - main
 
 concurrency:
    group: ci-group-${{ github.head_ref || github.ref_name }} #keep in this sequence only
