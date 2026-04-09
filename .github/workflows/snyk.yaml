@@ -3,7 +3,7 @@ on:
   push: 
     branches: 
       - feature/snyk
-  pull_request: 
+  # pull_request: 
     # branches:
     #    - main
 
