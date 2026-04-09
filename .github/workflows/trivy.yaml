@@ -12,6 +12,28 @@ on:
 permissions:
   contents: read
 
+concurrency:
+  group: job-group-for-branch-${{github.ref}} #just a group name for all the actions runnning for the branch
+  cancel-in-progress: true   
+#Useful if your PR is open and you still push to the branch, 2 jobs runs on for push one for PR
+# Commit A → Run #1 starts
+# Commit B → Run #2 starts → cancels Run #1
+# Commit C → Run #3 starts → cancels Run #2
+# One subtle but important thing
+
+# If you had multiple workflows:
+
+# trivy.yaml
+# build.yaml
+
+# And both use:
+
+# group: ci-main, thats why use ci-${{github.ref}} so the group will differ for each branch
+
+# 👉 They will cancel EACH OTHER
+
+# So concurrency is repo-wide, not file-specific. Concurrency is handled by GitHub Actions scheduler, NOT by runner.
+
 jobs:
   trivy-job:
     runs-on: ubuntu-latest
@@ -61,6 +83,8 @@ jobs:
       #     path: trivy-results.sarif
 
       - name: Run Trivy vulnerability Scanner
+        id: trivy
+        continue-on-error: true
         uses: aquasecurity/trivy-action@0.35.0
         with:
           image-ref: hiireys/actions101:v1
@@ -71,11 +95,16 @@ jobs:
           severity: 'CRITICAL,HIGH'
 
       - name: Upload to runner to download from Actions tab
-        if: Always() #it will always run although previous steps failed
+        # if: Always() #it will always run although previous steps failed
         uses: actions/upload-artifact@v4
         with: 
           name: trivy-report.txt
           path: trivy-report.txt
+      
+      - name: fail explicitly #If used continue_on_error: true instead of if: Always()
+        if: steps.trivy.outcome == 'failure'
+        run: 
+          exit 1 
 
 #output-->
 # - automation → use JSON
