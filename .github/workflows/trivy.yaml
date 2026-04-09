@@ -3,7 +3,7 @@ name: trivy
 on:
   push:
     branches: [ "feature/trivy-action" ]
-  pull_request:
+  # pull_request:
     # The branches below must be a subset of the branches above
     # branches: [ "main" ] #target branch the PR raised for
   # schedule:
