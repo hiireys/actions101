@@ -51,7 +51,7 @@ jobs:
       - name: Run Trivy vulnerability Scanner
         uses: aquasecurity/trivy-action@0.35.0
         with:
-          image: hiireys/actions101:v1
+          image-ref: hiireys/actions101:v1
           ignore-unfixed: true
           format: 'table'
           exit-code: 1
