@@ -13,6 +13,15 @@ permissions:
   contents: read
 
 jobs:
+  summary:
+    runs-on: ubuntu-latest
+    ACTIONS_STEP_DEBUG: true
+    steps:
+      - name: Generate Summary
+        run: | 
+          echo "## Build Summary" >> $GITHUB_STEP_SUMMARY
+          echo "- Status: Success " >> $GITHUB_STEP_SUMMARY
+    
   build:
     permissions:
       contents: read # for actions/checkout to fetch code
@@ -54,10 +63,12 @@ jobs:
           image-ref: hiireys/actions101:v1
           ignore-unfixed: true
           format: 'table'
-          exit-code: 0
+          exit-code: 1
           output: trivy-report.txt
           severity: 'CRITICAL,HIGH'
+
       - name: Upload to runner to download from Actions tab
+        #if: Always() #it will always run although previous steps failed
         uses: actions/upload-artifact@v4
         with: 
           name: trivy-report.txt
