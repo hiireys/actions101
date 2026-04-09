@@ -33,6 +33,7 @@ jobs:
              app.py
              Dockerfile
              requirements.txt
+             .snyk
           sparse-checkout-cone-mode: false
           #defualt true, only folder, no globbing
           #with false, folder, file, globbing file, dirs
@@ -62,7 +63,7 @@ jobs:
       - name: Snyk container image scan
         id: snyk-container
         run: 
-          snyk container test hiireys/actions101:v1 --org=${{vars.SNYK_ORG_ID}} --severity-threshold=high --exclude-base-image-vulns
+          snyk container test hiireys/actions101:v1 --file=Dockerfile --org=${{vars.SNYK_ORG_ID}} --severity-threshold=high --exclude-base-image-vulns
 
       # - name: Upload snyk report to runner to Download
       #   if: Always() #always runs, even though previous snyk scan job failed
