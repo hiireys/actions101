@@ -23,6 +23,7 @@ jobs:
           echo "## This Actions is for Trivy Scan" >> $GITHUB_STEP_SUMMARY
           echo "- Includes Docker image scanning from docker hub " >> $GITHUB_STEP_SUMMARY
           echo "- The trivy scan report table is avilabe to download " >> $GITHUB_STEP_SUMMARY
+          echo "- Trivy Scan for CRITICAL & HIGH vulnerabilites"
     
   build:
     permissions:
