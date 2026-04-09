@@ -32,11 +32,14 @@ jobs:
           spars-checkout: 
              app.py
              Dockerfile
-             requirements.txt
+             #requirements.txt
           spars-checkout-cone-mode: false
           #defualt true, only folder, no globbing
           #with false, folder, file, globbing file, dirs
-      
+      - name: List files
+        run: |
+          pwd
+          ls
       - name: Setup Snyk CLI
         run: | 
           curl https://static.snyk.io/cli/latest/snyk-linux -o snyk
