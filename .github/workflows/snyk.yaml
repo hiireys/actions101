@@ -22,7 +22,6 @@ jobs:
     name: snyk
     runs-on: ubuntu-latest
     environment: Development
-    id: snyk
     permissions: 
       security-events: write
       contents: read
@@ -49,6 +48,7 @@ jobs:
           snyk auth ${{secrets.SNYK_TOKEN}}
       
       - name: Snyk Scan Run
+        id: snyk
         run:
           snyk code test --org=${{vars.SNYK_ORG_ID}}
 
