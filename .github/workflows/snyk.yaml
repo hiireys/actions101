@@ -2,7 +2,7 @@ name: Snyk Scan
 on:
   push: 
     branches: 
-      - feature/*
+      - feature/snyk
   pull_request: 
     branches:
        - main
@@ -20,6 +20,7 @@ permissions:
 jobs:
   snyk-scan:
     name: snyk
+    runs-on: ubuntu-latest
     environment: Development
     id: snyk
     permissions: 
