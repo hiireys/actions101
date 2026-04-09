@@ -29,11 +29,10 @@ jobs:
       - name: Checkout Code
         uses: actions/checkout@v4
         with:
-          sparse-checkout: 
+          sparse-checkout: |
              app.py
              Dockerfile
-             #requirements.txt
-          sparse-checkout-cone-mode: true
+          sparse-checkout-cone-mode: false
           #defualt true, only folder, no globbing
           #with false, folder, file, globbing file, dirs
       - name: List files
