@@ -61,7 +61,16 @@ jobs:
           snyk code test --org=${{vars.SNYK_ORG_ID}} --severity-threshold=high --sarif > snyk-report.sarif
 
       - name: Upload snyk report to runner to Download
+        if: Always() #always runs, even though previous snyk scan job failed
+        #great to upload reports as without it, once previous steps failed
+        #workflow exits without running next steps
         uses: actions/upload-artifact@v4
         with:
            name: snyk-report
            path: snyk-report.sarif
+      
+      - name: Upload SARIF to github security tab 
+        #for this to run, permissions: security-events: write needs
+        uses: github/codeql-action/upload-sarif@v4
+        with: 
+          sarif_file: 'snyk-report.sarif'
