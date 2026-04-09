@@ -15,7 +15,8 @@ permissions:
 jobs:
   summary:
     runs-on: ubuntu-latest
-    ACTIONS_STEP_DEBUG: true
+    env:
+      ACTIONS_STEP_DEBUG: true
     steps:
       - name: Generate Summary
         run: | 
