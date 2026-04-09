@@ -63,7 +63,11 @@ jobs:
       - name: Snyk container image scan
         id: snyk-container
         run: 
+        #Use .snyk to ignore, flag --policy-path=.snyk
           snyk container test hiireys/actions101:v1  --org=${{vars.SNYK_ORG_ID}} --severity-threshold=high --policy-path=.snyk
+
+        #Use --file=Dockerfile to explicitly show build to snyk and use --exclude-base-image-vulns   
+        #snyk container test hiireys/actions101:v1  --file=Dockerfile --org=${{vars.SNYK_ORG_ID}} --severity-threshold=high --exlude-base-image-vulns
 
 #  Enables base image remediation advice
 
