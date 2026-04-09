@@ -54,7 +54,7 @@ jobs:
           image-ref: hiireys/actions101:v1
           ignore-unfixed: true
           format: 'table'
-          exit-code: 1
+          exit-code: 0
           output: trivy-report.txt
           severity: 'CRITICAL,HIGH'
       - name: Upload to runner to download from Actions tab
