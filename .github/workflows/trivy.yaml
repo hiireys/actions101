@@ -58,7 +58,7 @@ jobs:
           output: trivy-report.txt
           severity: 'CRITICAL,HIGH'
       - name: Upload to runner to download from Actions tab
-        uses: actions/upload-artifacts@v4
+        uses: actions/upload-artifact@v4
         with: 
           name: trivy-report.txt
           path: trivy-report.txt
