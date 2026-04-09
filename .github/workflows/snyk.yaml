@@ -29,11 +29,11 @@ jobs:
       - name: Checkout Code
         uses: actions/checkout@v4
         with:
-          spars-checkout: 
+          sparse-checkout: 
              app.py
              Dockerfile
              #requirements.txt
-          spars-checkout-cone-mode: false
+          sparse-checkout-cone-mode: false
           #defualt true, only folder, no globbing
           #with false, folder, file, globbing file, dirs
       - name: List files
@@ -62,7 +62,7 @@ jobs:
       - name: Snyk container image scan
         id: snyk-container
         run: 
-          snyk container test hiireys/actions101:v1 --org=${{vars.SNYK_ORG_ID}} --severity-threshold=high
+          snyk container test hiireys/actions101:v1 --org=${{vars.SNYK_ORG_ID}} --severity-threshold=high > snyk-report-text.txt
 
       - name: Upload snyk report to runner to Download
         if: Always() #always runs, even though previous snyk scan job failed
@@ -70,11 +70,12 @@ jobs:
         #workflow exits without running next steps
         uses: actions/upload-artifact@v4
         with:
-           name: snyk-report
-           path: snyk-report.sarif
+           name: snyk-report-text-file
+           path: snyk-report.txt
       
       - name: Upload SARIF to github security tab 
         #for this to run, permissions: security-events: write needs
+        if: Always()
         uses: github/codeql-action/upload-sarif@v4
         with: 
           sarif_file: 'snyk-report.sarif'
