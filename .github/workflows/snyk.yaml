@@ -50,11 +50,12 @@ jobs:
       - name: Snyk Scan Run
         id: snyk
         run:
-          snyk code test --org=${{vars.SNYK_ORG_ID}} --severity-threshold=high > snyk-report.txt
+          # snyk code test --org=${{vars.SNYK_ORG_ID}} --severity-threshold=high > snyk-report.txt
           #Snyk always fails (exit code 1) if findings ≥ threshold
           # --json > snyk-report.json
           # --sarif > synk-report.sarif
           # > snyk-report.txt
+          snyk code test --org=${{vars.SNYK_ORG_ID}} --severity-threshold=high --sarif > snyk-report.sarif
 
       - name: Upload snyk report to runner to Download
         uses: actions/upload-artifact@v4
