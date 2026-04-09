@@ -19,16 +19,11 @@ jobs:
                 Dockerfile
                 requirements.txt
              sparse-checkout-cone-mode: true
-
-        - name: docker setup
-          run: |
-             docker build -t hiireys/actions101:v1 .
-             docker push hiireys/actions101:v1
         
         - name: Run trivy scan
           uses: aquasecurity/trivy-action@0.35.0
           with: 
-            image-ref: hiireys/actions101:v1
+            image-ref: hiireys/prodgate-release-portal:v10
             format: 'table'
             exit-code: 0
             ignore-unifxed: true
