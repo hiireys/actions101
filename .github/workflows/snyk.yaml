@@ -32,6 +32,7 @@ jobs:
           sparse-checkout: |
              app.py
              Dockerfile
+             requirements.txt
           sparse-checkout-cone-mode: false
           #defualt true, only folder, no globbing
           #with false, folder, file, globbing file, dirs
