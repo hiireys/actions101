@@ -13,8 +13,16 @@ permissions:
   contents: read
 
 concurrency:
-  group: job-group-for-branch-${{github.ref}} #just a group name for all the actions runnning for the branch
-  cancel-in-progress: true   
+  #group: job-group-for-branch-${{github.ref}} #just a group name for all the actions runnning for the branch
+  # github.ref failed because it differs for push (refs/heads/...) and PR (refs/pull/...), so they ended up in different concurrency groups.
+  group: ci-${{ github.head_ref || github.ref_name }}
+  cancel-in-progress: true
+# | Event | `github.head_ref`    | `github.ref_name`    | Result               |
+# | ----- | -------------------- | -------------------- | -------------------- |
+# | push  | empty                | feature/trivy-action | feature/trivy-action |
+# | PR    | feature/trivy-action | main                 | feature/trivy-action |
+# A hardcoded group (like ci-global) would cancel runs across all branches, which is too aggressive for normal CI.
+     
 #Useful if your PR is open and you still push to the branch, 2 jobs runs on for push one for PR
 # Commit A → Run #1 starts
 # Commit B → Run #2 starts → cancels Run #1
