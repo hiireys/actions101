@@ -1,0 +1,54 @@
+name: Snyk Scan
+on:
+  push: 
+    branches: 
+      - feature/*
+  pull_request: 
+    branches:
+       - main
+
+concurrency:
+   group: ci-group-${{ github.head_ref || github.ref_name }} #keep in this sequence only
+   #for PR, head_ref is the source branch, and ref_name is target branch || for Push, head_ref is empty, but ref_name is the source branch
+   cancel-in-progress: true
+
+permissions:
+  contents: read #for actions/checkout to fetch code
+ #security-events: write #for github/codeql-action/upload-sarif
+ #actions: read #only required for a private repo by github/codeql-actin/upload-sarif to get the actions run status
+
+jobs:
+  snyk-scan:
+    name: snyk
+    environment: Development
+    id: snyk
+    permissions: 
+      security-events: write
+      contents: read
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+        with:
+          spars-checkout: 
+             app.py
+             Dockerfile
+             requirements.txt
+          spars-checkout-cone-mode: false
+          #defualt true, only folder, no globbing
+          #with false, folder, file, globbing file, dirs
+      
+      - name: Setup Snyk CLI
+        run: | 
+          curl https://static.snyk.io/cli/latest/snyk-linux -o snyk
+          chmod +x ./snyk
+          mv ./snyk /usr/local/bin
+      
+      - name: Snyk Authentication
+        run: |
+          snyk auth ${{secrets.SNYK_TOKEN}}
+      
+      - name: Snyk Scan Run
+        run:
+          snyk code test --org=${{vars.SNYK_ORG_ID}}
+
+
