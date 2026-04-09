@@ -64,14 +64,14 @@ jobs:
         run: 
           snyk container test hiireys/actions101:v1 --org=${{vars.SNYK_ORG_ID}} --severity-threshold=high
 
-      - name: Upload snyk report to runner to Download
-        if: Always() #always runs, even though previous snyk scan job failed
-        #great to upload reports as without it, once previous steps failed
-        #workflow exits without running next steps
-        uses: actions/upload-artifact@v4
-        with:
-           name: snyk-report
-           path: snyk-report.txt
+      # - name: Upload snyk report to runner to Download
+      #   if: Always() #always runs, even though previous snyk scan job failed
+      #   #great to upload reports as without it, once previous steps failed
+      #   #workflow exits without running next steps
+      #   uses: actions/upload-artifact@v4
+      #   with:
+      #      name: snyk-report
+      #      path: snyk-report.txt
       
       - name: Upload SARIF to github security tab 
         #for this to run, permissions: security-events: write needs
