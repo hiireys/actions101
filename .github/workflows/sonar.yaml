@@ -79,21 +79,16 @@ jobs:
 
       - name: Run traditional sonar-scanner cli scan
         run: |
-          
-          export JAVA_HOME="/home/rey/hiireys-home/_work/_tool/Java_Temurin-Hotspot_jdk/17.0.18-8/x64"
-          export PATH="$JAVA_HOME/bin:$PWD/sonar-scanner-5.0.1.3006-linux/bin:/usr/bin:/bin"
+          export PATH="$PWD/sonar-scanner-5.0.1.3006-linux/bin:$PATH"
           chmod +x sonar-scanner-5.0.1.3006-linux/bin/sonar-scanner
-          echo "JAVA_HOME=$JAVA_HOME"
-          which java
-          java -version
-          ls -l $JAVA_HOME/bin/java
-          file $JAVA_HOME/bin/java
-          $JAVA_HOME/bin/java -version
-          export SONAR_SCANNER_OPTS="-Djava.home=$JAVA_HOME"
-          # sonar-scanner -Dsonar.token=${{ secrets.SONAR_CLOUD_TOKEN }} -Dsonar.host.url=${{ vars.SONAR_CLOUD_HOST_URL }} -Dsonar.branch.name=${{ github.ref_name }}
-          $JAVA_HOME/bin/java \
+          export PATH="$JAVA_HOME:$PATH"
+          
+          java \
           -jar sonar-scanner-5.0.1.3006-linux/lib/sonar-scanner-cli-*.jar \
           -Dsonar.token=${{ secrets.SONAR_CLOUD_TOKEN }} \
           -Dsonar.host.url=${{ vars.SONAR_CLOUD_HOST_URL }} \
           -Dsonar.branch.name=${{ github.ref_name }}
 
+
+          # sonar-scanner -Dsonar.token=${{ secrets.SONAR_CLOUD_TOKEN }} -Dsonar.host.url=${{ vars.SONAR_CLOUD_HOST_URL }} -Dsonar.branch.name=${{ github.ref_name }}
+          #above command didn't work due to java path missing error athough path is correct
