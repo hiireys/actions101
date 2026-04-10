@@ -65,7 +65,7 @@ jobs:
         with: 
           distribution: temurin
           java-version: 17
-          
+
       - name: Traditional Sonar-scanner cli Setup
         run: |
           
@@ -79,6 +79,7 @@ jobs:
 
       - name: Run traditional sonar-scanner cli scan
         run: |
+           export PATH="$JAVA_HOME/bin:$PATH"
            export PATH="$PWD/sonar-scanner-5.0.1.3006-linux/bin:$PATH"
            chmod +x sonar-scanner-5.0.1.3006-linux/bin/sonar-scanner
            sonar-scanner \
