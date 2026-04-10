@@ -1,0 +1,13 @@
+version: v1.0.0
+ignore:
+  SNYK-DEBIAN12-PYTHON311-15435617:
+    - '*':
+        reason: Temporary exception
+        expires: 2026-12-31T00:00:00Z
+  SNYK-DEBIAN12-ZLIB-6008963:
+    - '*':
+        reason: Temporary exception
+        expires: 2026-12-31T00:00:00Z
+
+
+ 

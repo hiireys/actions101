@@ -1,0 +1,104 @@
+name: Snyk Scan
+on:
+  push: 
+    branches: 
+      - feature/snyk
+  # pull_request: 
+    # branches:
+    #    - main
+
+concurrency:
+   group: ci-group-${{ github.head_ref || github.ref_name }} #keep in this sequence only
+   #for PR, head_ref is the source branch, and ref_name is target branch || for Push, head_ref is empty, but ref_name is the source branch
+   cancel-in-progress: true
+
+permissions:
+  contents: read #for actions/checkout to fetch code
+ #security-events: write #for github/codeql-action/upload-sarif
+ #actions: read #only required for a private repo by github/codeql-actin/upload-sarif to get the actions run status
+
+jobs:
+  snyk-scan:
+    name: snyk
+    runs-on: ubuntu-latest
+    environment: Development
+    permissions: 
+      security-events: write
+      contents: read
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+        with:
+          sparse-checkout: |
+             app.py
+             Dockerfile
+             requirements.txt
+             .snyk
+          sparse-checkout-cone-mode: false
+          #defualt true, only folder, no globbing
+          #with false, folder, file, globbing file, dirs
+      - name: List files
+        run: |
+          pwd
+          ls -al
+      - name: Setup Snyk CLI
+        run: | 
+          curl https://static.snyk.io/cli/latest/snyk-linux -o snyk
+          chmod +x ./snyk
+          mv ./snyk /usr/local/bin
+      
+      - name: Snyk Authentication
+        run: |
+          snyk auth ${{secrets.SNYK_TOKEN}}
+      
+      - name: Snyk Code Scan Run
+        id: snyk-code
+        run:
+          # snyk code test --org=${{vars.SNYK_ORG_ID}} --severity-threshold=high > snyk-report.txt
+          #Snyk always fails (exit code 1) if findings ≥ threshold
+          # --json > snyk-report.json
+          # --sarif > synk-report.sarif
+          # > snyk-report.txt
+          snyk code test --org=${{vars.SNYK_ORG_ID}} --severity-threshold=high --sarif > snyk-report.sarif
+      - name: Snyk container image scan
+        id: snyk-container
+        run: 
+        #Use .snyk to ignore, flag --policy-path=.snyk
+          snyk container test hiireys/actions101:v1  --org=${{vars.SNYK_ORG_ID}} --severity-threshold=high --policy-path=.snyk
+
+        #Use --file=Dockerfile to explicitly show build to snyk and use --exclude-base-image-vulns   
+        #snyk container test hiireys/actions101:v1  --file=Dockerfile --org=${{vars.SNYK_ORG_ID}} --severity-threshold=high --exlude-base-image-vulns
+
+#  Enables base image remediation advice
+
+# Without --file:
+
+# Snyk wasn’t able to auto detect the base image
+
+# With --file:
+# 👉 You’ll get suggestions like:
+
+# Upgrade base image to python:3.11-slim-bullseye
+# 3. Makes --exclude-base-image-vulns work
+
+# 👉 Now Snyk can separate:
+
+# Type	Example
+# Base image vuln	OS packages (zlib, openssl)
+# App vuln	your installed dependencies
+
+      # - name: Upload snyk report to runner to Download
+      #   if: Always() #always runs, even though previous snyk scan job failed
+      #   #great to upload reports as without it, once previous steps failed
+      #   #workflow exits without running next steps
+      #   uses: actions/upload-artifact@v4
+      #   with:
+      #      name: snyk-report
+      #      path: snyk-report.txt
+      
+      - name: Upload SARIF to github security tab 
+        #for this to run, permissions: security-events: write needs
+        if: Always()
+        uses: github/codeql-action/upload-sarif@v4
+        with: 
+          sarif_file: 'snyk-report.sarif'

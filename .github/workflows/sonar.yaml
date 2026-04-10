@@ -1,0 +1,94 @@
+name: Sonar Scan
+on: 
+  push: 
+    branches: 
+      - feature/sonar
+
+concurrency:
+   group: ci-${{github.head_ref || github.ref_name}}
+   cancel-in-progress: true
+
+permissions:
+  contents: read #actions/checkout
+  security-events: write #to upload sarif file
+
+jobs:
+  sonarJob:
+    name: job-name-sonar
+    runs-on: self-hosted
+    environment: Development
+    steps: 
+      - name: Checkout
+        uses: actions/checkout@v4
+        with: 
+           sparse-checkout: |
+               .snyk
+               src/*
+               sonar-project.properties
+           sparse-checkout-cone-mode: false
+      
+      # - name: Sonar On Prem Scan
+      #   uses: SonarSource/sonarqube-scan-action@v2
+      #   env:
+      #      SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+      #      SONAR_HOST_URL: ${{ vars.SONAR_HOST_URL }}
+
+      # - name: Sonar Cloud Scan
+      #   uses: SonarSource/sonarqube-scan-action@v2
+      #   env:
+      #     SONAR_TOKEN: ${{ secrets.SONAR_CLOUD_TOKEN }}
+      #     SONAR_HOST_URL: ${{ vars.SONAR_CLOUD_HOST_URL }} #sonarcloud.io for cloud else the on prem url
+      
+          # --server, -s
+          # --org, -o
+          # --with-token, -t
+
+# sonar analyze
+# Analyze code for security issues.
+
+# sonar analyze secrets
+# Scan files or stdin for hardcoded secrets.
+#https://docs.sonarsource.com/sonarqube-cli/using/commands
+
+      # - name: Setup Sonar CLI
+      #   run: |
+      #     curl -o- https://raw.githubusercontent.com/SonarSource/sonarqube-cli/refs/heads/master/user-scripts/install.sh | bash
+          
+      #     export PATH="$HOME/.local/share/sonarqube-cli/bin:$PATH"
+
+      #     sonar auth login -s ${{ vars.SONAR_CLOUD_HOST_URL }} -t ${{ secrets.SONAR_CLOUD_TOKEN }} -o hiireyscorp
+           
+      #--> so this is the new sonar, can't use properties file and full repo scan sqaa is ai assited one file at a time
+
+      - name: Setup Java for Sonar
+        uses: actions/setup-java@v4
+        with: 
+          distribution: temurin
+          java-version: 17
+
+      - name: Traditional Sonar-scanner cli Setup
+        run: |
+          
+          curl -sSLo scanner.zip https://binaries.sonarsource.com/Distribution/sonar-scanner-cli/sonar-scanner-cli-5.0.1.3006-linux.zip
+          # unzip -q scanner.zip
+
+          python3 - << 'EOF'
+          import zipfile
+          zipfile.ZipFile("scanner.zip").extractall(".")
+          EOF
+
+      - name: Run traditional sonar-scanner cli scan
+        run: |
+          export PATH="$PWD/sonar-scanner-5.0.1.3006-linux/bin:$PATH"
+          chmod +x sonar-scanner-5.0.1.3006-linux/bin/sonar-scanner
+          export PATH="$JAVA_HOME:$PATH"
+          
+          java \
+          -jar sonar-scanner-5.0.1.3006-linux/lib/sonar-scanner-cli-*.jar \
+          -Dsonar.token=${{ secrets.SONAR_CLOUD_TOKEN }} \
+          -Dsonar.host.url=${{ vars.SONAR_CLOUD_HOST_URL }} \
+          -Dsonar.branch.name=${{ github.ref_name }}
+
+
+          # sonar-scanner -Dsonar.token=${{ secrets.SONAR_CLOUD_TOKEN }} -Dsonar.host.url=${{ vars.SONAR_CLOUD_HOST_URL }} -Dsonar.branch.name=${{ github.ref_name }}
+          #above command didn't work due to java path missing error athough path is correct

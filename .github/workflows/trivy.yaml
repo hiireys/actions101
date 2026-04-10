@@ -1,0 +1,122 @@
+name: trivy
+
+on:
+  push:
+    branches: [ "feature/trivy-action" ]
+  # pull_request:
+    # The branches below must be a subset of the branches above
+    # branches: [ "main" ] #target branch the PR raised for
+  # schedule:
+  #   - cron: '43 17 * * 1'
+
+permissions:
+  contents: read
+
+concurrency:
+  #group: job-group-for-branch-${{github.ref}} #just a group name for all the actions runnning for the branch
+  # github.ref failed because it differs for push (refs/heads/...) and PR (refs/pull/...), so they ended up in different concurrency groups.
+  group: ci-${{ github.head_ref || github.ref_name }} #keep in this sequence only else with ref_name first for PR it will result main
+  cancel-in-progress: true
+# | Event | `github.head_ref`    | `github.ref_name`    | Result               |
+# | ----- | -------------------- | -------------------- | -------------------- |
+# | push  | empty                | feature/trivy-action | feature/trivy-action |
+# | PR    | feature/trivy-action | main                 | feature/trivy-action |
+# A hardcoded group (like ci-global) would cancel runs across all branches, which is too aggressive for normal CI.
+     
+#Useful if your PR is open and you still push to the branch, 2 jobs runs on for push one for PR
+# Commit A → Run #1 starts
+# Commit B → Run #2 starts → cancels Run #1
+# Commit C → Run #3 starts → cancels Run #2
+# One subtle but important thing
+
+# If you had multiple workflows:
+
+# trivy.yaml
+# build.yaml
+
+# And both use:
+
+# group: ci-main, thats why use ci-${{github.ref}} so the group will differ for each branch
+
+# 👉 They will cancel EACH OTHER
+
+# So concurrency is repo-wide, not file-specific. Concurrency is handled by GitHub Actions scheduler, NOT by runner.
+
+jobs:
+  summary:
+    runs-on: ubuntu-latest
+    env:
+      ACTIONS_STEP_DEBUG: true
+    steps:
+      - name: Generate Summary
+        run: | 
+          echo "## This Actions is for Trivy Scan" >> $GITHUB_STEP_SUMMARY
+          echo "- Includes Docker image scanning from docker hub " >> $GITHUB_STEP_SUMMARY
+          echo "- The trivy scan report table is avilabe to download " >> $GITHUB_STEP_SUMMARY
+          echo "- Trivy Scan for CRITICAL & HIGH vulnerabilites" >> $GITHUB_STEP_SUMMARY
+    
+  scan:
+    permissions:
+      contents: read # for actions/checkout to fetch code
+      security-events: write # for github/codeql-action/upload-sarif to upload SARIF results
+      actions: read # only required for a private repository by github/codeql-action/upload-sarif to get the Action run status
+    runs-on: [ubuntu-latest]
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      # - name: Build an image from Dockerfile
+      #   run: |
+      #     docker build -t hiireys/actions101:v1
+
+      # - name: Run Trivy vulnerability scanner
+      #   uses: aquasecurity/trivy-action@7b7aa264d83dc58691451798b4d117d53d21edfe
+      #   with:
+      #     image-ref: 'hiireys/actions101:v1'
+      #     format: 'template'
+      #     template: '@/contrib/sarif.tpl'
+      #     output: 'trivy-results.sarif'
+      #     severity: 'CRITICAL,HIGH'
+
+      # - name: Upload Trivy scan results to GitHub Security tab
+      #   uses: github/codeql-action/upload-sarif@v3
+      #   with:
+      #     sarif_file: 'trivy-results.sarif'
+    
+      # - name: Upload report      #Runner page gets the report
+      #   uses: actions/upload-artifact@v4
+      #   with:
+      #     name: trivy-report
+      #     path: trivy-results.sarif
+
+      - name: Run Trivy vulnerability Scanner
+        id: trivy
+        continue-on-error: true
+        uses: aquasecurity/trivy-action@0.35.0
+        with:
+          image-ref: hiireys/actions101:v1
+          ignore-unfixed: true
+          format: 'table'
+          exit-code: 1
+          output: trivy-report.txt
+          severity: 'CRITICAL,HIGH'
+
+      - name: Upload to runner to download from Actions tab
+        # if: Always() #it will always run although previous steps failed
+        uses: actions/upload-artifact@v4
+        with: 
+          name: trivy-report.txt
+          path: trivy-report.txt
+      
+      - name: fail explicitly 
+        if: steps.trivy.outcome == 'failure'
+        run: 
+          exit 1 
+          #If used continue_on_error: then the steps passed although failure, reports uploaded, then here 
+          # failed the workflow explicitly via the steps.trivey(id of trivy job).outcome == 'failure' 
+          #else can use exit code 1 in trivy scan to fail and in upload if: Always() so it will run although scan (previous step failed)
+
+#output-->
+# - automation → use JSON
+# - GitHub Security tab → use SARIF
+# - dashboards → use JSON
