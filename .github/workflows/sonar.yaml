@@ -86,5 +86,8 @@ jobs:
           echo "JAVA_HOME=$JAVA_HOME"
           which java
           java -version
+          ls -l $JAVA_HOME/bin/java
+          file $JAVA_HOME/bin/java
+          $JAVA_HOME/bin/java -version
           sonar-scanner -Dsonar.token=${{ secrets.SONAR_CLOUD_TOKEN }} -Dsonar.host.url=${{ vars.SONAR_CLOUD_HOST_URL }} -Dsonar.branch.name=${{ github.ref_name }}
 
