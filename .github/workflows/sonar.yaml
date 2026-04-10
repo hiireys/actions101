@@ -13,8 +13,8 @@ permissions:
   security-events: write #to upload sarif file
 
 jobs:
-  sonar:
-    name: sonar-scan
+  sonarJob:
+    name: job-name-sonar
     runs-on: self-hosted
     environment: Development
     steps: 
@@ -36,6 +36,7 @@ jobs:
       #      SONAR_HOST_URL: ${{ vars.SONAR_HOST_URL }}
 
       - name: Sonar Cloud Scan
-        uses: SonarSource/sonarcloud-action@v2
+        uses: SonarSource/sonarqube-scan-action@v2
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_CLOUD_TOKEN }}
+          SONAR_HOST_URL: ${{ vars.SONAR_CLOUD_HOST_URL }}
