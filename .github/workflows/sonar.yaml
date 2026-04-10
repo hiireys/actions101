@@ -43,9 +43,11 @@ jobs:
         run: |
           curl -o- https://raw.githubusercontent.com/SonarSource/sonarqube-cli/refs/heads/master/user-scripts/install.sh | bash
 
+          sonar auth login -s ${{ vars.SONAR_CLOUD_HOST_URL }} --with-token ${{ secrets.SONAR_CLOUD_TOKEN }}
+
       - name: Run scan via Sonar CLI
         run: |
-          sonar-scanner \
+          sonar \
           -Dsonar.token=${{ secrets.SONAR_CLOUD_TOKEN }}
           -Dsonar.host.url=${{ vars.SONAR_CLOUD_HOST_URL }}
           -Dsonar.branch.name=${{ github.ref_name }}  
