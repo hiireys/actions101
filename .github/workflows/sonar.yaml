@@ -29,8 +29,13 @@ jobs:
                sonar-project.properties
            sparse-checkout-cone-mode: false
       
-      - name: Sonar Actions
-        uses: SonarSource/sonarqube-scan-action@v2
+      # - name: Sonar On Prem Scan
+      #   uses: SonarSource/sonarqube-scan-action@v2
+      #   env:
+      #      SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+      #      SONAR_HOST_URL: ${{ vars.SONAR_HOST_URL }}
+
+      - name: Sonar Cloud Scan
+        uses: SonarSource/sonarcloud-action@v2
         env:
-           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-           SONAR_HOST_URL: ${{ vars.SONAR_HOST_URL }}
+          SONAR_TOKEN: ${{ secrets.SONAR_CLOUD_TOKEN }}
