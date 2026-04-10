@@ -23,9 +23,7 @@ jobs:
         with: 
            sparse-checkout: |
                .snyk
-               app.py
-               Dockerfile
-               requirements.txt
+               src/*
                sonar-project.properties
            sparse-checkout-cone-mode: false
       
