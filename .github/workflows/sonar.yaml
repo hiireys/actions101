@@ -39,15 +39,25 @@ jobs:
       #     SONAR_TOKEN: ${{ secrets.SONAR_CLOUD_TOKEN }}
       #     SONAR_HOST_URL: ${{ vars.SONAR_CLOUD_HOST_URL }} #sonarcloud.io for cloud else the on prem url
       
+          # --server, -s
+          # --org, -o
+          # --with-token, -t
+
+# sonar analyze
+# Analyze code for security issues.
+
+# sonar analyze secrets
+# Scan files or stdin for hardcoded secrets.
+#https://docs.sonarsource.com/sonarqube-cli/using/commands
+
       - name: Setup Sonar CLI
         run: |
           curl -o- https://raw.githubusercontent.com/SonarSource/sonarqube-cli/refs/heads/master/user-scripts/install.sh | bash
+          
+          export PATH="$HOME/.local/share/sonarqube-cli/bin:$PATH"
 
-          sonar auth login -s ${{ vars.SONAR_CLOUD_HOST_URL }} --with-token ${{ secrets.SONAR_CLOUD_TOKEN }}
+          sonar auth login -s ${{ vars.SONAR_CLOUD_HOST_URL }} -t ${{ secrets.SONAR_CLOUD_TOKEN }} -o hiireyscorp
+           
+          sonar analyze
 
-      - name: Run scan via Sonar CLI
-        run: |
-          sonar \
-          -Dsonar.token=${{ secrets.SONAR_CLOUD_TOKEN }}
-          -Dsonar.host.url=${{ vars.SONAR_CLOUD_HOST_URL }}
-          -Dsonar.branch.name=${{ github.ref_name }}  
+
