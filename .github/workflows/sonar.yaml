@@ -58,6 +58,6 @@ jobs:
 
           sonar auth login -s ${{ vars.SONAR_CLOUD_HOST_URL }} -t ${{ secrets.SONAR_CLOUD_TOKEN }} -o hiireyscorp
            
-          sonar analyze
+          sonar scan
 
 
