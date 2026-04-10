@@ -63,8 +63,15 @@ jobs:
 
       - name: Traditional Sonar-scanner cli Setup
         run: |
+          
           curl -sSLo scanner.zip https://binaries.sonarsource.com/Distribution/sonar-scanner-cli/sonar-scanner-cli-5.0.1.3006-linux.zip
-          unzip -q scanner.zip
+          # unzip -q scanner.zip
+          
+          python3 - << 'EOF'
+          import zipfile
+          zipfile.ZipFile("scanner.zip").extractall(".")
+          EOF
+
           export PATH="$PWD/sonar-scanner-5.0.1.3006-linux/bin:$PATH"
 
       - name: Run traditional sonar-scanner cli scan
