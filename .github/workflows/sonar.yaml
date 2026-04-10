@@ -33,8 +33,19 @@ jobs:
       #      SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
       #      SONAR_HOST_URL: ${{ vars.SONAR_HOST_URL }}
 
-      - name: Sonar Cloud Scan
-        uses: SonarSource/sonarqube-scan-action@v2
-        env:
-          SONAR_TOKEN: ${{ secrets.SONAR_CLOUD_TOKEN }}
-          SONAR_HOST_URL: ${{ vars.SONAR_CLOUD_HOST_URL }}
+      # - name: Sonar Cloud Scan
+      #   uses: SonarSource/sonarqube-scan-action@v2
+      #   env:
+      #     SONAR_TOKEN: ${{ secrets.SONAR_CLOUD_TOKEN }}
+      #     SONAR_HOST_URL: ${{ vars.SONAR_CLOUD_HOST_URL }} #sonarcloud.io for cloud else the on prem url
+      
+      - name: Setup Sonar CLI
+        run: |
+          curl -o- https://raw.githubusercontent.com/SonarSource/sonarqube-cli/refs/heads/master/user-scripts/install.sh | bash
+
+      - name: Run scan via Sonar CLI
+        run: |
+          sonar-scanner \
+          -Dsonar.token=${{ secrets.SONAR_CLOUD_TOKEN }}
+          -Dsonar.host.url=${{ vars.SONAR_CLOUD_HOST_URL }}
+          -Dsonar.branch.name=${{ github.ref_name }}  
