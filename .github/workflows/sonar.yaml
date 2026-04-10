@@ -2,7 +2,7 @@ name: Sonar Scan
 on: 
   push: 
     branches: 
-      - feature/sonar
+      - main
 
 concurrency:
    group: ci-${{github.head_ref || github.ref_name}}
