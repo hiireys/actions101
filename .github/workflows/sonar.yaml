@@ -60,7 +60,12 @@ jobs:
            
       #--> so this is the new sonar, can't use properties file and full repo scan sqaa is ai assited one file at a time
 
-
+      - name: Setup Java for Sonar
+        uses: actions/setup-java@v4
+        with: 
+          distribution: temurin
+          java-version: 17
+          
       - name: Traditional Sonar-scanner cli Setup
         run: |
           
