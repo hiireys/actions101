@@ -94,5 +94,6 @@ jobs:
           $JAVA_HOME/bin/java \
           -jar sonar-scanner-5.0.1.3006-linux/lib/sonar-scanner-cli-*.jar \
           -Dsonar.token=${{ secrets.SONAR_CLOUD_TOKEN }} \
-          -Dsonar.host.url=https://sonarcloud.io
+          -Dsonar.host.url=${{ vars.SONAR_CLOUD_HOST_URL }} \
+          -Dsonar.branch.name=${{ github.ref_name }}
 
