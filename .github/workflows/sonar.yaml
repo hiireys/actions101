@@ -89,5 +89,6 @@ jobs:
           ls -l $JAVA_HOME/bin/java
           file $JAVA_HOME/bin/java
           $JAVA_HOME/bin/java -version
+          export SONAR_SCANNER_OPTS="-Djava.home=$JAVA_HOME"
           sonar-scanner -Dsonar.token=${{ secrets.SONAR_CLOUD_TOKEN }} -Dsonar.host.url=${{ vars.SONAR_CLOUD_HOST_URL }} -Dsonar.branch.name=${{ github.ref_name }}
 
