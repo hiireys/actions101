@@ -81,7 +81,8 @@ jobs:
         run: |
           export PATH="$PWD/sonar-scanner-5.0.1.3006-linux/bin:$PATH"
           chmod +x sonar-scanner-5.0.1.3006-linux/bin/sonar-scanner
-          export PATH="$JAVA_HOME:$PATH"
+          
+          #export PATH="$JAVA_HOME:$PATH" #no need to export as we used setup java action which should set it
           
           java \
           -jar sonar-scanner-5.0.1.3006-linux/lib/sonar-scanner-cli-*.jar \
