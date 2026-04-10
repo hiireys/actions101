@@ -1,0 +1,36 @@
+name: Sonar Scan
+on: 
+  push: 
+    branches: 
+      - feature/sonar
+
+concurrency:
+   group: ci-${{github.head_ref || github.ref_name}}
+   cancel-in-progress: true
+
+permissions:
+  contents: read #actions/checkout
+  security-events: write #to upload sarif file
+
+jobs:
+  sonar:
+    name: sonar-scan
+    runs-on: self-hosted
+    environment: Development
+    steps: 
+      - name: Checkout
+        uses: actions/checkout@v4
+        with: 
+           sparse-checkout: |
+               .snyk
+               app.py
+               Dockerfile
+               requirements.txt
+               sonar-project.properties
+           sparse-checkout-cone-mode: false
+      
+      - name: Sonar Actions
+        uses: SonarSource/sonarqube-scan-action@v2
+        env:
+           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+           SONAR_HOST_URL: ${{ vars.SONAR_HOST_URL }}
