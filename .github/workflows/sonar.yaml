@@ -87,6 +87,7 @@ jobs:
            echo "Path is: $PATH"
            export PATH="$PWD/sonar-scanner-5.0.1.3006-linux/bin:$PATH"
            chmod +x sonar-scanner-5.0.1.3006-linux/bin/sonar-scanner
+           java --version
            sonar-scanner \
            -Dsonar.token=${{ secrets.SONAR_CLOUD_TOKEN }} \
            -Dsonar.host.url=${{ vars.SONAR_CLOUD_HOST_URL }} \
