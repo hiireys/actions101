@@ -50,14 +50,27 @@ jobs:
 # Scan files or stdin for hardcoded secrets.
 #https://docs.sonarsource.com/sonarqube-cli/using/commands
 
-      - name: Setup Sonar CLI
-        run: |
-          curl -o- https://raw.githubusercontent.com/SonarSource/sonarqube-cli/refs/heads/master/user-scripts/install.sh | bash
+      # - name: Setup Sonar CLI
+      #   run: |
+      #     curl -o- https://raw.githubusercontent.com/SonarSource/sonarqube-cli/refs/heads/master/user-scripts/install.sh | bash
           
-          export PATH="$HOME/.local/share/sonarqube-cli/bin:$PATH"
+      #     export PATH="$HOME/.local/share/sonarqube-cli/bin:$PATH"
 
-          sonar auth login -s ${{ vars.SONAR_CLOUD_HOST_URL }} -t ${{ secrets.SONAR_CLOUD_TOKEN }} -o hiireyscorp
+      #     sonar auth login -s ${{ vars.SONAR_CLOUD_HOST_URL }} -t ${{ secrets.SONAR_CLOUD_TOKEN }} -o hiireyscorp
            
-          sonar scan
+      #--> so this is the new sonar, can't use properties file and full repo scan sqaa is ai assited one file at a time
 
+
+      - name: Traditional Sonar-scanner cli Setup
+        run: |
+          curl -sSLo scanner.zip https://binaries.sonarsource.com/Distribution/sonar-scanner-cli/sonar-scanner-cli-5.0.1.3006-linux.zip
+          unzip -q scanner.zip
+          export PATH="$PWD/sonar-scanner-5.0.1.3006-linux/bin:$PATH"
+
+      - name: Run traditional sonar-scanner cli scan
+        run: |
+           sonar-scanner \
+           -Dsonar.token=${{ secrets.SONAR_CLOUD_TOKEN }} \
+           -Dsonar.host.url=${{ vars.SONAR_CLOUD_HOST_URL }} \
+           -Dsonar.branch.name=${{ github.ref_name }}
 
