@@ -25,61 +25,49 @@ jobs:
                .snyk
                src/*
                sonar-project.properties
-           sparse-checkout-cone-mode: false
+           sparse-checkout-cone-mode: false    
       
       # - name: Sonar On Prem Scan
-      #   uses: SonarSource/sonarqube-scan-action@v2
+      #   uses: SonarSource/sonarqube-scan-action@v2  
       #   env:
       #      SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-      #      SONAR_HOST_URL: ${{ vars.SONAR_HOST_URL }}
+      #      SONAR_HOST_URL: ${{ vars.SONAR_HOST_URL }} 
+      #for sonar on prem and cloud same action
+      #use sonarcloud.io for SONAR_HOST_URL for sonarcloud
 
-      # - name: Sonar Cloud Scan
-      #   uses: SonarSource/sonarqube-scan-action@v2
-      #   env:
-      #     SONAR_TOKEN: ${{ secrets.SONAR_CLOUD_TOKEN }}
-      #     SONAR_HOST_URL: ${{ vars.SONAR_CLOUD_HOST_URL }} #sonarcloud.io for cloud else the on prem url
-      
-          # --server, -s
-          # --org, -o
-          # --with-token, -t
 
-# sonar analyze
-# Analyze code for security issues.
 
-# sonar analyze secrets
-# Scan files or stdin for hardcoded secrets.
-#https://docs.sonarsource.com/sonarqube-cli/using/commands
-
-      # - name: Setup Sonar CLI
-      #   run: |
-      #     curl -o- https://raw.githubusercontent.com/SonarSource/sonarqube-cli/refs/heads/master/user-scripts/install.sh | bash
-          
-      #     export PATH="$HOME/.local/share/sonarqube-cli/bin:$PATH"
-
-      #     sonar auth login -s ${{ vars.SONAR_CLOUD_HOST_URL }} -t ${{ secrets.SONAR_CLOUD_TOKEN }} -o hiireyscorp
-           
-      #--> so this is the new sonar, can't use properties file and full repo scan sqaa is ai assited one file at a time
+# Traditional sonar-scanner cli
+# Use this to run via new sonar cli, but limited to one file at time https://docs.sonarsource.com/sonarqube-cli/using/commands
 
       - name: Setup Java for Sonar
         uses: actions/setup-java@v4
         with: 
-          distribution: temurin
+          distribution: temurin  #Eclipse foundation + Adoptium org merged in (2021) --> new product temurin
           java-version: 17
 
       - name: Traditional Sonar-scanner cli Setup
         run: |
           
           curl -sSLo scanner.zip https://binaries.sonarsource.com/Distribution/sonar-scanner-cli/sonar-scanner-cli-5.0.1.3006-linux.zip
-          # unzip -q scanner.zip
+          # unzip -q scanner.zip #if unzip not avilable use below to unzip
 
           python3 - << 'EOF'
           import zipfile
           zipfile.ZipFile("scanner.zip").extractall(".")
           EOF
 
+# python3 file.py	  :run file
+# python3 -	        :read code from stdin
+# << 'EOF' → heredoc (send block as stdin)
+# python3 - → read script from stdin
+# Together → run inline Python code
+# <<- (with dash) → strip leading tabs in heredoc not spaces
+
       - name: Run traditional sonar-scanner cli scan
         run: |
           export PATH="$PWD/sonar-scanner-5.0.1.3006-linux/bin:$PATH"
+          
           chmod +x sonar-scanner-5.0.1.3006-linux/bin/sonar-scanner
           
           #export PATH="$JAVA_HOME:$PATH" #no need to export as we used setup java action which should set it
